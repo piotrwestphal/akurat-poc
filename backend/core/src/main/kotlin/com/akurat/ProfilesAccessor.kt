@@ -12,7 +12,7 @@ class ProfilesAccessor: ProfilesService {
         return profile
     }
 
-    override fun get(name: String): Profile = map.getValue(name)
+    override fun get(name: String): Profile? = map.get(name)
 
     override fun getAll(): List<Profile> = map.toList().map { it.second }
 }
