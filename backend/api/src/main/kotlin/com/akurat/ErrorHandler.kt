@@ -19,8 +19,5 @@ fun Application.configureErrorHandler() {
             log.error(cause)
             call.respond(statusCode, ErrorMessage(statusCode.description, cause.message))
         }
-        exception<Throwable> { cause ->
-            log.error(cause)
-        }
     }
 }
