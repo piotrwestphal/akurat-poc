@@ -1,6 +1,7 @@
 package com.akurat
 
 import com.akurat.model.Profile
+import io.ktor.features.*
 
 class ProfilesAccessor: ProfilesService {
 
@@ -12,7 +13,7 @@ class ProfilesAccessor: ProfilesService {
         return profile
     }
 
-    override fun get(name: String): Profile? = map.get(name)
+    override fun get(name: String): Profile = map[name] ?: throw NotFoundException("Profile with name '$name' not found")
 
     override fun getAll(): List<Profile> = map.toList().map { it.second }
 }
