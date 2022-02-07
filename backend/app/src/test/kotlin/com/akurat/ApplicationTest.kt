@@ -9,7 +9,7 @@ import kotlin.test.Test
 class ApplicationTest {
 
     @Test
-    fun `should get 'Hello World!' in response`() {
+    fun `should get empty array in response`() {
         testApp {
             handleRequest(HttpMethod.Get, "/profiles").apply {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)

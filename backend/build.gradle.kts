@@ -3,11 +3,15 @@ val kotlin_version: String by project
 val logback_version: String by project
 val koin_version: String by project
 val assertj_version: String by project
+val mockk_version: String by project
+
 // TODO: https://github.com/mobiletoly/ktor-hexagonal-multimodule
+// TODO: https://github.com/mathias21/KtorEasy
 // TODO: https://medium.com/@math21/testing-a-ktor-server-part-i-route-testing-84f8e82454d7
+// TODO: https://mockk.io/
 plugins {
     base
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
 }
 
 allprojects {
@@ -34,7 +38,7 @@ subprojects {
         testImplementation("io.insert-koin:koin-test:$koin_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
         testImplementation("org.assertj:assertj-core:$assertj_version")
-        testImplementation("io.ktor:ktor-serialization:$ktor_version")
+        testImplementation("io.mockk:mockk:$mockk_version")
     }
 }
 

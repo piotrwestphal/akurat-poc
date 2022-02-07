@@ -9,7 +9,10 @@ import org.koin.test.check.checkKoinModules
 class CheckModulesTest {
 
     @Test
-    fun `check modules`() = checkKoinModules {
-        coreModule
+    fun `check modules`() {
+        val modules = listOf(
+            coreModule,
+        )
+        checkKoinModules(modules)
     }
 }
