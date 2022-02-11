@@ -2,10 +2,11 @@ package com.akurat
 
 import com.akurat.model.Profile
 import io.ktor.features.*
+import java.util.concurrent.ConcurrentHashMap
 
 class ProfilesAccessor: ProfilesService {
 
-    private val map = HashMap<String, Profile>()
+    private val map = ConcurrentHashMap<String, Profile>()
 
     override fun create(name: String): Profile {
         val profile = Profile(name)

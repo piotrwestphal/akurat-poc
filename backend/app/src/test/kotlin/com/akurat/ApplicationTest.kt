@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 import kotlin.test.Test
 
-class ApplicationTest {
+internal class ApplicationTest {
 
     @Test
     fun `should get empty array in response`() {
