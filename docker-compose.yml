@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: ak-backend
+
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    image: ak-webapp
+    ports:
+      - 8080:80
