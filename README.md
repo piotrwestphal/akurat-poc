@@ -1,10 +1,5 @@
 # akurat
 
-connect to minikube on remote
-```
-create tunnel to remote server
-ssh -L 8443:192.168.58.2:8443 westus00
+###terraform
 
-use kubectl on local machine
-
-```
+remember to install proper java on vm - without it may cause some issues with gradle

@@ -1,5 +1,4 @@
 rootProject.name = "backend"
-rootProject.buildFileName = "build.gradle.kts"
 
 include("api")
 include("app")
