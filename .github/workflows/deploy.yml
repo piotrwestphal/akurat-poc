@@ -106,7 +106,7 @@ jobs:
             cd ~/app
             git fetch
             git reset --hard origin/main
-            docker-compose pull
+            docker-compose build
             docker-compose up -dV
             docker image prune -f
           EOF
