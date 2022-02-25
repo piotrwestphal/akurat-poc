@@ -12,7 +12,7 @@ import org.koin.ktor.ext.inject
 fun Route.profileRoute() {
 
     val service by inject<ProfilesService>()
-    route("profiles") {
+    route("/profiles") {
         get {
             call.respond(service.getAll().map { it.toResponse() })
 
@@ -26,4 +26,5 @@ fun Route.profileRoute() {
             call.respond(HttpStatusCode.Created, service.create(data.text).toResponse())
         }
     }
+
 }

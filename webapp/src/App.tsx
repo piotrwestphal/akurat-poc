@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import {Box} from "@mui/material";
+import {CreateButton} from "./CreateButton";
+import {Profile} from "./Profile";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Hello world 2!!
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [profiles, setProfiles] = useState<Array<{ role: string, name: string }>>([])
+    const refresh = async () => {
+        const response = await fetch('/api/profiles').then(v => v.json() as Promise<Array<{ role: string, name: string }>>)
+        setProfiles(response)
+    }
+
+    useEffect(() => {
+        refresh()
+    }, [])
+
+    return (
+        <Box sx={theme => ({
+            width: theme.spacing(80),
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: '20px auto',
+        })}>
+            <CreateButton refresh={refresh}/>
+            {profiles.map(v => <Profile key={v.name} role={v.role} name={v.name}/>)}
+        </Box>
+    );
 }
 
 export default App;

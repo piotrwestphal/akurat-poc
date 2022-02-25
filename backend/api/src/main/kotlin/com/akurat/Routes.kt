@@ -6,6 +6,8 @@ import io.ktor.routing.*
 
 fun Application.configureRouting() {
     routing {
-        profileRoute()
+        route("/api") {
+            profileRoute()
+        }
     }
 }

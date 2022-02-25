@@ -1,7 +1,6 @@
 package com.akurat
 
 import com.akurat.model.ZonedDatePeriod
-import io.github.serpro69.kfaker.Faker
 import io.ktor.features.*
 import java.time.ZonedDateTime
 import kotlin.test.Test
@@ -16,10 +15,7 @@ internal class SchedulerTest {
         val period = ZonedDatePeriod(ZonedDateTime.now(), ZonedDateTime.now(), "")
         scheduler.setBusy("name", period)
         val result = scheduler.isAvailable("name", period)
-        val faker = Faker()
-        faker.name.nameWithMiddle()
         assertThat(result).isFalse
-        assertThat(faker.name.name()).isEqualTo("John")
     }
 
     @Test
