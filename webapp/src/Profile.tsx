@@ -1,4 +1,4 @@
-import {Avatar, CardActions, CardContent, CardHeader, IconButton, Typography, Card} from "@mui/material";
+import {Avatar, Card, CardActions, CardContent, CardHeader, IconButton, Typography} from "@mui/material";
 import React from "react"
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import ShareIcon from '@mui/icons-material/Share'
@@ -26,7 +26,10 @@ export function Profile(props: CardProps) {
     }
 
     return (
-        <Card>
+        <Card sx={theme => ({
+            width: theme.spacing(60),
+            marginTop: theme.spacing(2)
+        })}>
             <CardHeader
                 avatar={
                     <Avatar sx={{bgcolor: getColor(role)}} aria-label="recipe">
