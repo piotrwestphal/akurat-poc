@@ -13,7 +13,7 @@ export function CreateButton(props: CreateButtonProps) {
     }
 
     const createProfile = async () => {
-        await fetch('/api/profiles',
+        await fetch('/api/v1/profiles',
             {
                 method: 'POST',
                 body: JSON.stringify({text: role}),
