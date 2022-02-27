@@ -6,7 +6,7 @@ import {Profile} from "./Profile";
 function App() {
     const [profiles, setProfiles] = useState<Array<{ role: string, name: string }>>([])
     const refresh = async () => {
-        const response = await fetch('/api/profiles').then(v => v.json() as Promise<Array<{ role: string, name: string }>>)
+        const response = await fetch('/api/v1/profiles').then(v => v.json() as Promise<Array<{ role: string, name: string }>>)
         setProfiles(response)
     }
 

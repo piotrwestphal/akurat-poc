@@ -7,7 +7,9 @@ import io.ktor.routing.*
 fun Application.configureRouting() {
     routing {
         route("/api") {
-            profileRoute()
+            route("/v1") {
+                profileRoute()
+            }
         }
     }
 }
