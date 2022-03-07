@@ -35,7 +35,7 @@ export function CreateButton(props: CreateButtonProps) {
 
     return (
         <Box sx={theme => ({
-            width: theme.spacing(20),
+            width: theme.spacing(40),
             marginBottom: theme.spacing(3),
             display: 'flex',
             flexDirection: 'column',
