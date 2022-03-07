@@ -5,7 +5,7 @@ import com.akurat.model.Role
 
 interface ProfilesService {
     fun create(name: String, role: Role): Profile
-    fun get(id: Long): Profile?
+    fun get(id: Int): Profile?
     fun getAll(): List<Profile>
-    fun delete(id: Long): Profile?
+    fun delete(id: Int): Profile?
 }

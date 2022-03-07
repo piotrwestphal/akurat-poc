@@ -1,34 +1,50 @@
 import {Avatar, Card, CardActions, CardContent, CardHeader, IconButton, Typography} from "@mui/material";
 import React from "react"
 import FavoriteIcon from '@mui/icons-material/Favorite'
-import ShareIcon from '@mui/icons-material/Share'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
+import DeleteIcon from '@mui/icons-material/Delete';
 import {blue, green, red} from "@mui/material/colors";
 
 
 interface CardProps {
+    readonly id: number
     readonly role: string
     readonly name: string
+    readonly refresh: () => void
 }
 
 export function Profile(props: CardProps) {
-    const {role, name} = props
+    const {id, role, name, refresh} = props
 
     const getColor = (aRole: string) => {
         switch (aRole) {
-            case 'photographer':
+            case 'PHOTOGRAPHER':
                 return green[500]
-            case 'model':
+            case 'MODEL':
                 return blue[500]
             default:
                 return red[500]
         }
     }
 
+    const remove = async () => {
+        await fetch(`/api/v1/profiles/${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        refresh()
+    }
+
     return (
         <Card sx={theme => ({
             width: theme.spacing(60),
-            marginTop: theme.spacing(2)
+            marginTop: theme.spacing(2),
+            [theme.breakpoints.down('sm')]: {
+                width: '100%',
+            }
         })}>
             <CardHeader
                 avatar={
@@ -53,8 +69,8 @@ export function Profile(props: CardProps) {
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon/>
                 </IconButton>
-                <IconButton aria-label="share">
-                    <ShareIcon/>
+                <IconButton onClick={remove} aria-label="delete">
+                    <DeleteIcon/>
                 </IconButton>
             </CardActions>
         </Card>

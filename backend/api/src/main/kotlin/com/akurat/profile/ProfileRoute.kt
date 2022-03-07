@@ -21,7 +21,7 @@ fun Route.profileRoute() {
             call.respond(service.getAll().sortedBy(Profile::createdAt).map { it.toResponse() })
         }
         get("{id}") {
-            val id = call.parameters["id"]?.toLong()
+            val id = call.parameters["id"]?.toInt()
                 ?: throw BadRequestException("Request parameter 'name' should be provided")
             val profile = service.get(id) ?: throw NotFoundException("Profile with id '$id' not found")
             call.respond(profile.toResponse())
@@ -33,7 +33,7 @@ fun Route.profileRoute() {
             call.respond(HttpStatusCode.Created, profile.toResponse())
         }
         delete("{id}") {
-            val id = call.parameters["id"]?.toLong()
+            val id = call.parameters["id"]?.toInt()
                 ?: throw BadRequestException("Request parameter 'id' should be provided")
             service.delete(id) ?: throw NotFoundException("Profile with id '$id' not found")
             call.respond(HttpStatusCode.OK)

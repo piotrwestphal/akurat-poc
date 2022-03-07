@@ -4,9 +4,9 @@ import {CreateButton} from "./CreateButton";
 import {Profile} from "./Profile";
 
 function App() {
-    const [profiles, setProfiles] = useState<Array<{ role: string, name: string }>>([])
+    const [profiles, setProfiles] = useState<Array<{ id: number, role: string, name: string }>>([])
     const refresh = async () => {
-        const response = await fetch('/api/v1/profiles').then(v => v.json() as Promise<Array<{ role: string, name: string }>>)
+        const response = await fetch('/api/v1/profiles').then(v => v.json() as Promise<Array<{ id: number, role: string, name: string }>>)
         setProfiles(response)
     }
 
@@ -21,9 +21,17 @@ function App() {
             flexDirection: 'column',
             alignItems: 'center',
             margin: '20px auto',
+            [theme.breakpoints.down('sm')]: {
+                margin: '20px 0',
+                width: '100%'
+            }
         })}>
             <CreateButton refresh={refresh}/>
-            {profiles.map(v => <Profile key={v.name} role={v.role} name={v.name}/>)}
+            {profiles.map(v => <Profile key={v.id}
+                                        id={v.id}
+                                        role={v.role}
+                                        name={v.name}
+                                        refresh={refresh}/>)}
         </Box>
     );
 }
