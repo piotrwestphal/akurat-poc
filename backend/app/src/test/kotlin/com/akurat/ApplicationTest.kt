@@ -1,38 +1,16 @@
 package com.akurat
 
+import com.akurat.model.ProfileResponse
+import com.akurat.model.Role
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 import kotlin.test.Test
 
 internal class ApplicationTest {
-
-    @Test
-    fun `should get empty array in response`() {
-        testApp {
-            handleRequest(HttpMethod.Get, "/api/v1/profiles").apply {
-                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
-                assertThat(response.content).isEqualToIgnoringWhitespace("[]")
-            }
-        }
-    }
-
-    // TODO: uncomment when remove faker
-    // @Test
-    fun `should create profile for given user`() {
-        testApp {
-            with(handleRequest(HttpMethod.Post, "/api/v1/profiles") {
-                val createProfileRequest = readFile("/json/createProfileRequest.json")
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(createProfileRequest)
-            }) {
-                val createProfileResponse = readFile("/json/createProfileResponse.json")
-                assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
-                assertThat(response.content).isEqualToIgnoringWhitespace(createProfileResponse)
-            }
-        }
-    }
 
     @Test
     fun `should authorize with simple credentials`() {
@@ -48,9 +26,55 @@ internal class ApplicationTest {
     }
 
     @Test
-    fun `should get error message when there is no profile with given name`() {
+    fun `should receive an empty array in response`() {
         testApp {
-            with(handleRequest(HttpMethod.Get, "/api/v1/profiles/West")) {
+            with(handleRequest(HttpMethod.Get, "/api/v1/profiles")) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.content).isEqualToIgnoringWhitespace("[]")
+            }
+        }
+    }
+
+    @Test
+    fun `should receive a proper profile in response`() {
+        testApp {
+            val createdId = createProfileAndGetId("West", Role.PHOTOGRAPHER)
+            with(handleRequest(HttpMethod.Get, "/api/v1/profiles/$createdId")) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.content).isNotNull
+
+                val result = Json.decodeFromString<ProfileResponse>(response.content!!)
+                assertThat(result.id).isEqualTo(createdId)
+                assertThat(result.name).isEqualTo("West")
+                assertThat(result.role).isEqualTo(Role.PHOTOGRAPHER.name)
+                assertThat(result.createdAt).isNotNull
+            }
+        }
+    }
+
+    @Test
+    fun `should receive a proper profiles in response`() {
+        testApp {
+            with(createProfile("Piotr West", Role.MODEL))
+            { assertThat(response.status()).isEqualTo(HttpStatusCode.Created) }
+            with(createProfile("Kate Carpenter", Role.DESIGNER))
+            { assertThat(response.status()).isEqualTo(HttpStatusCode.Created) }
+            with(handleRequest(HttpMethod.Get, "/api/v1/profiles")) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
+                assertThat(response.content).isNotNull
+
+                val result = Json.decodeFromString<List<ProfileResponse>>(response.content!!)
+                assertThat(result).hasSize(2)
+                assertThat(result).extracting("name").containsExactly("Piotr West", "Kate Carpenter")
+                assertThat(result).extracting("role").containsExactly(Role.MODEL.name, Role.DESIGNER.name)
+            }
+        }
+    }
+
+    @Test
+    fun `should receive an error message when there is no profile with given name`() {
+        testApp {
+            with(handleRequest(HttpMethod.Get, "/api/v1/profiles/111")) {
                 val expectedErrorMessage = readFile("/json/notFoundErrorMessage.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.NotFound)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
@@ -59,15 +83,59 @@ internal class ApplicationTest {
     }
 
     @Test
-    fun `should get error message when there is bad parameter in request body`() {
+    fun `should create profile for given user`() {
         testApp {
-            with(handleRequest(HttpMethod.Post, "/api/v1/profiles") {
-                val erroneousCreateProfileRequest = readFile("/json/erroneousCreateProfileRequest.json")
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(erroneousCreateProfileRequest)
-            }) {
-                val expectedErrorMessage = readFile("/json/badRequestErrorMessage.json")
+            with(createProfile("Piotr West", Role.MODEL)) {
+                assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
+                assertThat(response.headers["Location"]).contains("/api/v1/profiles/")
+                assertThat(response.content).isNotNull
+
+                val result = Json.decodeFromString<ProfileResponse>(response.content!!)
+                assertThat(result.id).isPositive
+                assertThat(result.name).isEqualTo("Piotr West")
+                assertThat(result.role).isEqualTo(Role.MODEL.name)
+                assertThat(result.createdAt).isNotNull
+            }
+        }
+    }
+
+    @Test
+    fun `should receive an error message when there are bad parameters in create profile request body`() {
+        testApp {
+            with(createProfile("/json/erroneousParamCreateProfileRequest.json")) {
+                val expectedErrorMessage = readFile("/json/missingFieldsErrorMessage.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
+                assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
+            }
+        }
+    }
+
+    @Test
+    fun `should receive an error message when there is bad value in create profile request body`() {
+        testApp {
+            with(createProfile("/json/erroneousValueCreateProfileRequest.json")) {
+                val expectedErrorMessage = readFile("/json/badValueErrorMessage.json")
+                assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
+                assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
+            }
+        }
+    }
+
+    @Test
+    fun `should delete profile for given user`() {
+        testApp {
+            val createdId = createProfileAndGetId("Piotr West", Role.MODEL)
+            with(handleRequest(HttpMethod.Delete, "/api/v1/profiles/$createdId"))
+            { assertThat(response.status()).isEqualTo(HttpStatusCode.OK) }
+        }
+    }
+
+    @Test
+    fun `should receive an error message if the profile to be deleted does not exist`() {
+        testApp {
+            with(handleRequest(HttpMethod.Delete, "/api/v1/profiles/111")) {
+                val expectedErrorMessage = readFile("/json/notFoundErrorMessage.json")
+                assertThat(response.status()).isEqualTo(HttpStatusCode.NotFound)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
             }
         }

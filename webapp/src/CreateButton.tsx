@@ -40,9 +40,9 @@ export function CreateButton(props: CreateButtonProps) {
                     label="Profile role"
                     onChange={handleChange}
                 >
-                    <MenuItem value='designer'>Designer</MenuItem>
-                    <MenuItem value='model'>Photo model</MenuItem>
-                    <MenuItem value='photographer'>Photographer</MenuItem>
+                    <MenuItem value='DESIGNER'>Designer</MenuItem>
+                    <MenuItem value='MODEL'>Photo model</MenuItem>
+                    <MenuItem value='PHOTOGRAPHER'>Photographer</MenuItem>
                 </Select>
             </FormControl>
             <Button disabled={role === ''} variant="contained" onClick={createProfile}>Create Profile</Button>

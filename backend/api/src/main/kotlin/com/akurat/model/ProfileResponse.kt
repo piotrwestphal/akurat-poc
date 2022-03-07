@@ -3,6 +3,6 @@ package com.akurat.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ProfileResponse(val role: String, val name: String)
+data class ProfileResponse(val id: Long, val name: String, val role: String, val createdAt: Long)
 
-fun Profile.toResponse() = ProfileResponse(role, name)
+fun Profile.toResponse() = ProfileResponse(id, name, role.name, createdAt.toEpochMilli())

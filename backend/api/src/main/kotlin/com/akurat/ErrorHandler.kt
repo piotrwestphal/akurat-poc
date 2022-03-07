@@ -1,5 +1,6 @@
 package com.akurat
 
+import com.akurat.model.ConflictException
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -18,6 +19,16 @@ fun Application.configureErrorHandler() {
             log.error(cause)
             call.respond(statusCode, ErrorMessage(statusCode.description, cause.message))
         }
+        exception<BadRequestException> { cause ->
+            val statusCode = HttpStatusCode.BadRequest
+            log.error(cause)
+            call.respond(statusCode, ErrorMessage(statusCode.description, cause.message))
+        }
+        exception<ConflictException> { cause ->
+            val statusCode = HttpStatusCode.Conflict
+            log.error(cause)
+            call.respond(statusCode, ErrorMessage(statusCode.description, cause.message))
+        }
         exception<SerializationException> { cause ->
             val statusCode = HttpStatusCode.BadRequest
             log.error(cause)
@@ -25,3 +36,4 @@ fun Application.configureErrorHandler() {
         }
     }
 }
+

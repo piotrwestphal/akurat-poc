@@ -19,6 +19,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+    testImplementation("io.ktor:ktor-serialization:$ktor_version")
 }
 
 tasks{

@@ -1,23 +1,25 @@
 package com.akurat
 
 import com.akurat.model.Profile
-import io.github.serpro69.kfaker.Faker
-import io.ktor.features.*
+import com.akurat.model.Role
+import java.time.Instant
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.random.Random
 
-class ProfilesAccessor: ProfilesService {
+class ProfilesAccessor : ProfilesService {
 
-    private val map = ConcurrentHashMap<String, Profile>()
+    private val map = ConcurrentHashMap<Long, Profile>()
 
-    override fun create(role: String): Profile {
-        val faker = Faker()
-        val name = faker.name.nameWithMiddle()
-        val profile = Profile(role, name)
-        map[name] = profile
+    override fun create(name: String, role: Role): Profile {
+        val profile = Profile(Random.nextLong(1L, Long.MAX_VALUE), name, role, Instant.now())
+        map[profile.id] = profile
         return profile
     }
 
-    override fun get(name: String): Profile = map[name] ?: throw NotFoundException("Profile with name '$name' not found")
+    override fun get(id: Long): Profile? = map[id]
 
     override fun getAll(): List<Profile> = map.toList().sortedBy { pair -> pair.first }.map { it.second }
+
+    override fun delete(id: Long): Profile? = map.remove(id)
 }
