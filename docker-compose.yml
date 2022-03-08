@@ -7,6 +7,8 @@ services:
     image: ak-backend
 
   webapp:
+    environment:
+      NODE_ENV: production
     build:
       context: ./webapp
       dockerfile: Dockerfile
