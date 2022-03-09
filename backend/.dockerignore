@@ -1,5 +1,5 @@
 .gradle
 gradle
-build
+**/build
 .dockerignore
 Dockerfile
