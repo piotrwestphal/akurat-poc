@@ -2,6 +2,3 @@
 .gradle
 
 build
-api/build
-core/build
-domain/build
