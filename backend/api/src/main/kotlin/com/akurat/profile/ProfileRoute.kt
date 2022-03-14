@@ -10,6 +10,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
+import java.util.*
 
 fun Route.profileRoute() {
 
@@ -21,9 +22,9 @@ fun Route.profileRoute() {
             call.respond(service.getAll().sortedBy(Profile::createdAt).map { it.toResponse() })
         }
         get("{id}") {
-            val id = call.parameters["id"]?.toInt()
+            val id = call.parameters["id"]
                 ?: throw BadRequestException("Request parameter 'name' should be provided")
-            val profile = service.get(id) ?: throw NotFoundException("Profile with id '$id' not found")
+            val profile = service.get(UUID.fromString(id)) ?: throw NotFoundException("Profile with id '$id' not found")
             call.respond(profile.toResponse())
         }
         post {
@@ -33,9 +34,9 @@ fun Route.profileRoute() {
             call.respond(HttpStatusCode.Created, profile.toResponse())
         }
         delete("{id}") {
-            val id = call.parameters["id"]?.toInt()
+            val id = call.parameters["id"]
                 ?: throw BadRequestException("Request parameter 'id' should be provided")
-            service.delete(id) ?: throw NotFoundException("Profile with id '$id' not found")
+            service.delete(UUID.fromString(id)) ?: throw NotFoundException("Profile with id '$id' not found")
             call.respond(HttpStatusCode.OK)
         }
     }

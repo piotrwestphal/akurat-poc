@@ -32,12 +32,12 @@ fun TestApplicationEngine.createProfile(name: String, role: Role): TestApplicati
         setBody(createProfileRequest)
     }
 
-fun TestApplicationEngine.createProfileAndGetId(name: String, role: Role): Long =
+fun TestApplicationEngine.createProfileAndGetId(name: String, role: Role): String =
     with(createProfile(name, role)) {
         assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
         val locationHeader = response.headers["Location"]
         assertThat(locationHeader).contains("/api/v1/profiles/")
-        locationHeader!!.split('/').last().toLong()
+        locationHeader!!.split('/').last()
     }
 
 fun TestApplicationEngine.createProfile(jsonPath: String): TestApplicationCall =

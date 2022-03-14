@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS kingboo.profiles;
+DROP KEYSPACE IF EXISTS kingboo;

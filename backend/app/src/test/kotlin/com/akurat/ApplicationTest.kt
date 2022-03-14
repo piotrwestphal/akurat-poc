@@ -74,7 +74,8 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message when there is no profile with given name`() {
         testApp {
-            with(handleRequest(HttpMethod.Get, "/api/v1/profiles/111")) {
+            val uuid = "ff1a116e-3e3a-4e62-ba49-6b9904c96590"
+            with(handleRequest(HttpMethod.Get, "/api/v1/profiles/$uuid")) {
                 val expectedErrorMessage = readFile("/json/notFoundErrorMessage.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.NotFound)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
@@ -91,7 +92,7 @@ internal class ApplicationTest {
                 assertThat(response.content).isNotNull
 
                 val result = Json.decodeFromString<ProfileResponse>(response.content!!)
-                assertThat(result.id).isPositive
+                assertThat(result.id).isNotBlank
                 assertThat(result.name).isEqualTo("Piotr West")
                 assertThat(result.role).isEqualTo(Role.MODEL.name)
                 assertThat(result.createdAt).isNotNull
@@ -133,7 +134,7 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message if the profile to be deleted does not exist`() {
         testApp {
-            with(handleRequest(HttpMethod.Delete, "/api/v1/profiles/111")) {
+            with(handleRequest(HttpMethod.Delete, "/api/v1/profiles/ff1a116e-3e3a-4e62-ba49-6b9904c96590")) {
                 val expectedErrorMessage = readFile("/json/notFoundErrorMessage.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.NotFound)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)

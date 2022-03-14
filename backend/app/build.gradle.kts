@@ -29,6 +29,3 @@ tasks{
         }
     }
 }
-
-// workaround for intellij issue
-tasks.register("prepareKotlinBuildScriptModel") {}
