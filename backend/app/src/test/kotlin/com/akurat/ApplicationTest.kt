@@ -53,6 +53,18 @@ internal class ApplicationTest {
     }
 
     @Test
+    fun `should receive an error message when retrieving profile with 'id' in wrong format`() {
+        testApp {
+            val wrongUuid = "ff1a116e-3e3a-4e62-ba49-6b990c96590"
+            with(handleRequest(HttpMethod.Get, "/api/v1/profiles/$wrongUuid")) {
+                val expectedErrorMessage = readFile("/json/wrongUuidFormatErrorMessage.json")
+                assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
+                assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
+            }
+        }
+    }
+
+    @Test
     fun `should receive a proper profiles in response`() {
         testApp {
             with(createProfileBasedOnJson("Piotr West", Role.MODEL))
@@ -112,10 +124,44 @@ internal class ApplicationTest {
     }
 
     @Test
-    fun `should receive an error message when there is bad value in create profile request body`() {
+    fun `should receive an error message when there is bad role value in create profile request body`() {
         testApp {
-            with(createProfileBasedOnJson("/json/erroneousValueCreateProfileRequest.json")) {
-                val expectedErrorMessage = readFile("/json/badValueErrorMessage.json")
+            with(createProfileBasedOnJson("/json/erroneousRoleCreateProfileRequest.json")) {
+                val expectedErrorMessage = readFile("/json/badRoleErrorMessage.json")
+                assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
+                assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
+            }
+        }
+    }
+
+    @Test
+    fun `should receive an error message when the 'name' is too short`() {
+        testApp {
+            with(createProfileBasedOnJson("/json/erroneousShortNameCreateProfileRequest.json")) {
+                val expectedErrorMessage = readFile("/json/nameTooShortErrorMessage.json")
+                assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
+                assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
+            }
+        }
+    }
+
+    @Test
+    fun `should receive an error message when the 'name' is too long`() {
+        testApp {
+            with(createProfileBasedOnJson("/json/erroneousLongNameCreateProfileRequest.json")) {
+                val expectedErrorMessage = readFile("/json/nameTooLongErrorMessage.json")
+                assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
+                assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
+            }
+        }
+    }
+
+    @Test
+    fun `should receive an error message when deleting profile with 'id' in wrong format`() {
+        testApp {
+            val wrongUuid = "wrong_format"
+            with(handleRequest(HttpMethod.Delete, "/api/v1/profiles/$wrongUuid")) {
+                val expectedErrorMessage = readFile("/json/wrongUuidFormatErrorMessage.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
             }

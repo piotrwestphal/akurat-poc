@@ -2,6 +2,8 @@ package com.akurat.profiles
 
 import com.akurat.ProfilesService
 import com.akurat.model.toResponse
+import com.akurat.validation.validateUuid
+import io.konform.validation.Invalid
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -19,7 +21,6 @@ fun Route.profilesRoute() {
     val profilesService by inject<ProfilesService>()
 
     // TODO: add method for update
-    // TODO: test bad uuid -> Bas Request Exception
     route("/profiles") {
         get {
             call.respond(profilesService.getAll().map { it.toResponse() })
@@ -46,11 +47,13 @@ fun Route.profilesRoute() {
     }
 }
 
+
 private val PipelineContext<*, ApplicationCall>.id: UUID get()  =
     with(this.call.parameters["id"] ?: throw BadRequestException("Request parameter 'id' should be provided")) {
-        try {
+        val result = validateUuid(this)
+        if(result is Invalid) {
+            throw BadRequestException("Wrong request parameter 'id' format: ${result.errors.map { it.message }}")
+        } else {
             UUID.fromString(this)
-        } catch (e: IllegalArgumentException) {
-            throw BadRequestException(e.message ?: "Error during converting string to uuid", e.cause)
         }
     }
