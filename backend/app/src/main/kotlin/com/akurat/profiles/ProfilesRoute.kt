@@ -51,7 +51,7 @@ fun Route.profilesRoute() {
 private val PipelineContext<*, ApplicationCall>.id: UUID get()  =
     with(this.call.parameters["id"] ?: throw BadRequestException("Request parameter 'id' should be provided")) {
         val result = validateUuid(this)
-        if(result is Invalid) {
+        if (result is Invalid) {
             throw BadRequestException("Wrong request parameter 'id' format: ${result.errors.map { it.message }}")
         } else {
             UUID.fromString(this)
