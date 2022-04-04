@@ -89,23 +89,3 @@ jobs:
   #          context: ./webapp
   #          push: true
   #          tags: piotrwest/ak-webapp:latest
-
-  deploy:
-    needs: [build_backend, build_webapp]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: webfactory/ssh-agent@master
-        with:
-          ssh-private-key: ${{ secrets.WESTUS00_KEY }}
-
-      - name: Deploy app to westus00
-        run: |
-          ssh -T -o StrictHostKeyChecking=no -l ${{ secrets.WESTUS00_USER }} ${{ secrets.WESTUS00_ADDRESS }} << EOF
-            cd ~/app
-            git fetch
-            git reset --hard origin/main
-            docker-compose up --build --force-recreate -d
-            docker image prune -f
-          EOF
