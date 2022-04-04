@@ -67,9 +67,9 @@ internal class ApplicationTest {
     @Test
     fun `should receive a proper profiles in response`() {
         testApp {
-            with(createProfileBasedOnJson("Piotr West", Role.MODEL))
+            with(createProfile("Piotr West", Role.MODEL))
             { assertThat(response.status()).isEqualTo(HttpStatusCode.Created) }
-            with(createProfileBasedOnJson("Kate Carpenter", Role.DESIGNER))
+            with(createProfile("Kate Carpenter", Role.DESIGNER))
             { assertThat(response.status()).isEqualTo(HttpStatusCode.Created) }
             with(handleRequest(HttpMethod.Get, "/api/v1/profiles")) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -98,7 +98,7 @@ internal class ApplicationTest {
     @Test
     fun `should create profile for given user`() {
         testApp {
-            with(createProfileBasedOnJson("Piotr West", Role.MODEL)) {
+            with(createProfile("Piotr West", Role.MODEL)) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
                 assertThat(response.headers["Location"]).contains("/api/v1/profiles/")
                 assertThat(response.content).isNotNull
@@ -115,7 +115,7 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message when there are bad parameters in create profile request body`() {
         testApp {
-            with(createProfileBasedOnJson("/json/req_profile_create_wrong_param.json")) {
+            with(createProfileFromJson("/json/req_profile_create_wrong_param.json")) {
                 val expectedErrorMessage = readFile("/json/error_profile_create_missing_fields.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
@@ -126,7 +126,7 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message when there is bad role value in create profile request body`() {
         testApp {
-            with(createProfileBasedOnJson("/json/req_profile_create_wrong_role.json")) {
+            with(createProfileFromJson("/json/req_profile_create_wrong_role.json")) {
                 val expectedErrorMessage = readFile("/json/error_profile_create_bad_role_value.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
@@ -137,7 +137,7 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message when the 'name' is too short`() {
         testApp {
-            with(createProfileBasedOnJson("/json/req_profile_create_too_short_name.json")) {
+            with(createProfileFromJson("/json/req_profile_create_too_short_name.json")) {
                 val expectedErrorMessage = readFile("/json/error_profile_create_name_too_short.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
@@ -148,7 +148,7 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message when the 'name' is too long`() {
         testApp {
-            with(createProfileBasedOnJson("/json/req_profile_create_too_long_name.json")) {
+            with(createProfileFromJson("/json/req_profile_create_too_long_name.json")) {
                 val expectedErrorMessage = readFile("/json/error_profile_create_name_too_long.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)

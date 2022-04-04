@@ -23,7 +23,7 @@ fun readFile(path: String): String =
 private fun <T> stringify(serializer: KSerializer<T>, clazz: T): String =
     Json.encodeToString(serializer, clazz)
 
-fun TestApplicationEngine.createProfileBasedOnJson(name: String, role: Role): TestApplicationCall =
+fun TestApplicationEngine.createProfile(name: String, role: Role): TestApplicationCall =
     handleRequest(HttpMethod.Post, "/api/v1/profiles") {
         val createProfileRequest = stringify(CreateProfileRequest.serializer(), CreateProfileRequest(name, role))
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
@@ -31,14 +31,14 @@ fun TestApplicationEngine.createProfileBasedOnJson(name: String, role: Role): Te
     }
 
 fun TestApplicationEngine.createProfileAndGetId(name: String, role: Role): String =
-    with(createProfileBasedOnJson(name, role)) {
+    with(createProfile(name, role)) {
         assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
         val locationHeader = response.headers["Location"]
         assertThat(locationHeader).contains("/api/v1/profiles/")
         locationHeader!!.split('/').last()
     }
 
-fun TestApplicationEngine.createProfileBasedOnJson(jsonPath: String): TestApplicationCall =
+fun TestApplicationEngine.createProfileFromJson(jsonPath: String): TestApplicationCall =
     handleRequest(HttpMethod.Post, "/api/v1/profiles") {
         val createProfileRequest = readFile(jsonPath)
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
