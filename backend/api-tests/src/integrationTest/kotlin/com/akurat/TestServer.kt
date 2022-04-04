@@ -15,25 +15,25 @@ abstract class TestServer {
         @BeforeClass
         @JvmStatic
         internal fun createSchema() {
-            dbHelper.executeScripts("create_schema.cql")
+            dbHelper.executeScriptsFromFile("create_schema.cql")
         }
 
         @AfterClass
         @JvmStatic
         internal fun deleteSchema() {
-            dbHelper.executeScripts("delete_schema.cql")
+            dbHelper.executeScriptsFromFile("delete_schema.cql")
         }
     }
 
     @BeforeTest
     fun before() {
         logger.info { "Clean up before test" }
-        dbHelper.executeScripts("clean_up.cql")
+        dbHelper.executeScriptsFromFile("clean_up.cql")
     }
 
     @AfterTest
     fun after() {
         logger.info { "Clean up after test" }
-        dbHelper.executeScripts("clean_up.cql")
+        dbHelper.executeScriptsFromFile("clean_up.cql")
     }
 }

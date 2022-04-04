@@ -8,12 +8,12 @@ import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.time.Instant
 import java.util.*
 
 // https://github.com/DataStax-Examples/object-mapper-jvm/tree/master/kotlin
 // https://github.com/DataStax-Examples/getting-started-with-astra-java
 // https://ktor.io/docs/testing.html#end-to-end
+// TODO: remove!!
 class Connector {
 
     fun healthCheck() {
@@ -22,12 +22,12 @@ class Connector {
             val rs: ResultSet = session.execute("select release_version from system.local")
             val row: Row? = rs.one()
             //Print the results of the CQL query to the console:
-            val dao = ProfileMapper.builder(session).build().dao()
+//            val dao = ProfileMapper.builder(session).build().dao()
             val id = UUID.randomUUID()
-            val created = dao.create(ProfileEntity(id, "piotr", "DUPA", Instant.now()))
-            val profile = dao.get(id)
-            val profiles = dao.getAll().all()
-            println(profiles.toString())
+//            val created = dao.create(ProfileEntity(id, "piotr", "DUPA", Instant.now()))
+//            val profile = dao.get(id)
+//            val profiles = dao.getAll().all()
+//            println(profiles.toString())
             if (row != null) {
                 println(row.getString("release_version"))
             } else {

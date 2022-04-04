@@ -4,5 +4,6 @@ CREATE TABLE IF NOT EXISTS kingboo.profiles (
     name text,
     role text,
     created_at timestamp,
+    updated_at timestamp,
     PRIMARY KEY (profile_id, created_at)
-)  WITH CLUSTERING ORDER BY (created_at DESC);
+) WITH CLUSTERING ORDER BY (created_at DESC);

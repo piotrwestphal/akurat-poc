@@ -55,9 +55,9 @@ internal class ApplicationTest {
     @Test
     fun `should receive a proper profiles in response`() {
         testApp {
-            with(createProfile("Piotr West", Role.MODEL))
+            with(createProfileBasedOnJson("Piotr West", Role.MODEL))
             { assertThat(response.status()).isEqualTo(HttpStatusCode.Created) }
-            with(createProfile("Kate Carpenter", Role.DESIGNER))
+            with(createProfileBasedOnJson("Kate Carpenter", Role.DESIGNER))
             { assertThat(response.status()).isEqualTo(HttpStatusCode.Created) }
             with(handleRequest(HttpMethod.Get, "/api/v1/profiles")) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.OK)
@@ -86,7 +86,7 @@ internal class ApplicationTest {
     @Test
     fun `should create profile for given user`() {
         testApp {
-            with(createProfile("Piotr West", Role.MODEL)) {
+            with(createProfileBasedOnJson("Piotr West", Role.MODEL)) {
                 assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
                 assertThat(response.headers["Location"]).contains("/api/v1/profiles/")
                 assertThat(response.content).isNotNull
@@ -103,7 +103,7 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message when there are bad parameters in create profile request body`() {
         testApp {
-            with(createProfile("/json/erroneousParamCreateProfileRequest.json")) {
+            with(createProfileBasedOnJson("/json/erroneousParamCreateProfileRequest.json")) {
                 val expectedErrorMessage = readFile("/json/missingFieldsErrorMessage.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)
@@ -114,7 +114,7 @@ internal class ApplicationTest {
     @Test
     fun `should receive an error message when there is bad value in create profile request body`() {
         testApp {
-            with(createProfile("/json/erroneousValueCreateProfileRequest.json")) {
+            with(createProfileBasedOnJson("/json/erroneousValueCreateProfileRequest.json")) {
                 val expectedErrorMessage = readFile("/json/badValueErrorMessage.json")
                 assertThat(response.status()).isEqualTo(HttpStatusCode.BadRequest)
                 assertThat(response.content).isEqualToIgnoringWhitespace(expectedErrorMessage)

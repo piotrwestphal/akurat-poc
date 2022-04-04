@@ -10,9 +10,7 @@ class CheckModulesTest {
 
     @Test
     fun `check modules`() {
-        val modules = listOf(
-            coreModule,
-        )
+        val modules = profileModule("dev")
         checkKoinModules(modules)
     }
 }
