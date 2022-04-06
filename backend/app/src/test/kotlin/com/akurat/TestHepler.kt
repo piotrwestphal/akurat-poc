@@ -2,6 +2,7 @@ package com.akurat
 
 import com.akurat.model.Role
 import com.akurat.profiles.CreateProfileRequest
+import com.akurat.profiles.UpdateProfileRequest
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.KSerializer
@@ -30,6 +31,13 @@ fun TestApplicationEngine.createProfile(name: String, role: Role): TestApplicati
         setBody(createProfileRequest)
     }
 
+fun TestApplicationEngine.updateProfile(id: String, name: String, role: Role): TestApplicationCall =
+    handleRequest(HttpMethod.Patch, "/api/v1/profiles/$id") {
+        val updateProfileRequest = stringify(UpdateProfileRequest.serializer(), UpdateProfileRequest(name, role))
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(updateProfileRequest)
+    }
+
 fun TestApplicationEngine.createProfileAndGetId(name: String, role: Role): String =
     with(createProfile(name, role)) {
         assertThat(response.status()).isEqualTo(HttpStatusCode.Created)
@@ -43,4 +51,11 @@ fun TestApplicationEngine.createProfileFromJson(jsonPath: String): TestApplicati
         val createProfileRequest = readFile(jsonPath)
         addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         setBody(createProfileRequest)
+    }
+
+fun TestApplicationEngine.updateProfileFromJson(id: String, jsonPath: String): TestApplicationCall =
+    handleRequest(HttpMethod.Patch, "/api/v1/profiles/$id") {
+        val updateProfileRequest = readFile(jsonPath)
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(updateProfileRequest)
     }

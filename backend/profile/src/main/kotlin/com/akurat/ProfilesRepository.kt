@@ -7,6 +7,6 @@ internal interface ProfilesRepository {
     fun insert(record: Profile): Profile
     fun findById(id: UUID): Profile?
     fun findAll(): List<Profile>
-    fun findAndUpdate(id: UUID, record: Profile): Profile?
+    fun update(id: UUID, record: Profile): Profile
     fun findAndDelete(id: UUID): Profile?
 }

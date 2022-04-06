@@ -8,6 +8,7 @@ fun profileModule(env: String? = null) = listOf(
         when (env) {
             "ci", "prod" -> {
                 println("NOT MOCKED SERVICES $env")
+                cassandraModule
                 single { ProfileDaoFactory(get()).dao() }
                 single<ProfilesRepository> { CassandraProfilesRepository(get()) }
             }
@@ -17,5 +18,4 @@ fun profileModule(env: String? = null) = listOf(
             }
         }
     },
-    cassandraModule
 )

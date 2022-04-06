@@ -40,9 +40,11 @@ fun Route.profilesRoute() {
                 ?: throw NotFoundException("Profile with id '$id' not found")
             call.respond(HttpStatusCode.OK)
         }
-        put("{id}") {
-            // TODO!
-            profilesService.update(id, null!!)
+        patch("{id}") {
+            val profileId = id
+            val updateRequest = call.receive<UpdateProfileRequest>()
+            val profile = profilesService.update(profileId, updateRequest.toProfileUpdate()) ?: throw NotFoundException("Profile with id '$id' not found")
+            call.respond(HttpStatusCode.OK, profile.toResponse())
         }
     }
 }

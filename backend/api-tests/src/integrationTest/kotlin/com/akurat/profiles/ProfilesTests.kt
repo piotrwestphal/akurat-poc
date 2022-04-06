@@ -22,7 +22,7 @@ internal class ProfilesTests : TestServer() {
             val now = Instant.now().toEpochMilli()
             val response: HttpResponse = httpClient().post("http://localhost:8080/api/v1/profiles") {
                 contentType(ContentType.Application.Json)
-                body = ProfileRequest("West", Role.MODEL)
+                body = CreateProfileRequest("West", Role.MODEL)
             }
 
             assertThat(response.status).isEqualTo(HttpStatusCode.Created)
@@ -68,18 +68,41 @@ internal class ProfilesTests : TestServer() {
     @Test
     fun `should retrieve all`(): Unit =
         runBlocking {
-            val profiles = listOf(
-                "King Richard" to Role.DESIGNER,
-                "Macio Moretti" to Role.MODEL,
-                "Marcin Masecki" to Role.PHOTOGRAPHER,
-                "Linda McCartney" to Role.DESIGNER,
-                "Daniel Lobotom" to Role.MODEL
-            )
+            val profile1 = createProfile("King Richard", Role.DESIGNER)
+            val profile2 = createProfile("Macio Moretti", Role.MODEL)
+            val profile3 = createProfile("Marcin Masecki", Role.PHOTOGRAPHER)
+            val profile4 = createProfile("Linda McCartney", Role.DESIGNER)
+            val profile5 = createProfile("Daniel Lobotom", Role.MODEL)
 
-            val profileIds = profiles.map { createProfile(it.first, it.second).id }
             val response: HttpResponse = httpClient().get("http://localhost:8080/api/v1/profiles")
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             val profilesResponse = response.receive<List<ProfileResponse>>()
-            assertThat(profilesResponse.map { it.id }).isEqualTo(profileIds)
+            assertThat(profilesResponse.map { it.id }).containsExactlyInAnyOrder(
+                profile1.id.toString(),
+                profile2.id.toString(),
+                profile3.id.toString(),
+                profile4.id.toString(),
+                profile5.id.toString(),
+            )
+        }
+
+    @Test
+    fun `should update`(): Unit =
+        runBlocking {
+            val createdProfile = createProfile("Morgan Woodpecker", Role.PHOTOGRAPHER)
+            val response: HttpResponse = httpClient().patch("http://localhost:8080/api/v1/profiles/${createdProfile.id}") {
+                contentType(ContentType.Application.Json)
+                body = UpdateProfileRequest("Morgan Freeman", Role.MODEL)
+            }
+
+            assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+            SoftAssertions().apply {
+                val (id, name, role, createdAt, updatedAt) = response.receive<ProfileResponse>()
+                assertThat(id).isEqualTo(createdProfile.id.toString())
+                assertThat(name).isEqualTo("Morgan Freeman")
+                assertThat(role).isEqualTo(Role.MODEL.name)
+                assertThat(createdAt).isEqualTo(createdProfile.createdAt.toEpochMilli())
+                assertThat(updatedAt).isGreaterThan(createdProfile.updatedAt.toEpochMilli())
+            }.assertAll()
         }
 }

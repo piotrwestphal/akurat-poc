@@ -16,11 +16,10 @@ internal class CassandraProfilesRepository(
     override fun findAll() =
         profileDao.findAll().all().map { it.toProfile() }
 
-    override fun findAndUpdate(id: UUID, record: Profile) =
-        profileDao.findById(id)?.let {
-            profileDao.update(record.toEntity())
-            record
-        }
+    override fun update(id: UUID, record: Profile): Profile {
+        profileDao.update(record.toEntity())
+        return record
+    }
 
     override fun findAndDelete(id: UUID): Profile? =
         profileDao.findById(id)?.also { profileDao.delete(it) }?.toProfile()

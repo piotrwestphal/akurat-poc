@@ -18,13 +18,10 @@ abstract class InMemoryRepository<T: DBRecord> {
 
     open fun findAll(): List<T> = store.toList().map { it.second }
 
-    open fun findAndUpdate(id: UUID, record: T): T? =
-        if (store.containsKey(id)) {
-            store[id] = record
-            record
-        } else {
-            null
-        }
+    open fun update(id: UUID, record: T): T {
+        store[id] = record
+        return record
+    }
 
     open fun findAndDelete(id: UUID): T? = store.remove(id)
 }
