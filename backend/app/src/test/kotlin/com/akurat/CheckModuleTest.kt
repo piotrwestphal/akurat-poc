@@ -10,7 +10,7 @@ class CheckModulesTest {
 
     @Test
     fun `check modules`() {
-        val modules = profileModule("dev")
+        val modules = profilesInMemoryModule
         checkKoinModules(modules)
     }
 }

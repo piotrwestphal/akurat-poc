@@ -66,40 +66,9 @@ jobs:
         working-directory: ./backend
         run: ./gradlew :api-tests:integrationTest
 
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: backend-app
-#          path: backend/app/build/libs/*.jar
-
-  api_tests:
-    runs-on: ubuntu-latest
-
-    services:
-      cassandra:
-        image: cassandra:latest
-        ports:
-          - 9042:9042
-
-    needs: [ build_backend ]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
+      - name: archive api tests results
+        if: failure()
+        uses: actions/upload-artifact@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
-          cache: gradle
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: backend-app
-
-      - name: run app
-        env:
-          KTOR_ENV: ci
-#          ASTRA_DB_CONTACT_POINT: cassandra
-        run: java -jar *.jar &
-
-      - name: execute tests
-        working-directory: ./backend
-        run: ./gradlew :api-tests:integrationTest
+          name: api-tests-results
+          path: backend/api-tests/build/reports/tests/integrationTest
