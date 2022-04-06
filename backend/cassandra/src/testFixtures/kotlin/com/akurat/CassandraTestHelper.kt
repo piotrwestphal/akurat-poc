@@ -22,6 +22,6 @@ class CassandraTestHelper {
 
     private fun getSession(keyspace: String? = null) = CqlSession.builder()
         .withKeyspace(keyspace)
-        .addContactPoint(InetSocketAddress.createUnresolved("cassandra", 9042))
+//        .addContactPoint(InetSocketAddress.createUnresolved("cassandra", 9042))
         .build()
 }
