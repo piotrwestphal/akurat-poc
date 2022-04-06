@@ -56,10 +56,11 @@ jobs:
           ./gradlew :app:shadowJar
 
       - name: run app
+        working-directory: ./backend
         env:
           KTOR_ENV: ci
 #          ASTRA_DB_CONTACT_POINT: cassandra
-        run: java -jar *.jar &
+        run: java -jar app/build/libs/*.jar &
 
       - name: execute tests
         working-directory: ./backend
