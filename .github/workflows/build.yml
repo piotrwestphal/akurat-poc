@@ -80,6 +80,7 @@ jobs:
       - name: run app
         env:
           KTOR_ENV: ci
+          ASTRA_DB_CONTACT_POINT: cassandra
         run: java -jar *.jar &
 
       - name: execute tests
