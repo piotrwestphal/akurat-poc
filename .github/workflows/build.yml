@@ -50,10 +50,9 @@ jobs:
           ./gradlew :app:shadowJar
 
       - uses: actions/upload-artifact@v3
-        working-directory: ./backend
         with:
           name: backend-app
-          path: app/build/libs/*.jar
+          path: backend/app/build/libs/*.jar
 
   api_tests:
     runs-on: ubuntu-latest
