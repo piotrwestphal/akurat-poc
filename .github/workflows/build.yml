@@ -11,7 +11,8 @@ jobs:
     steps:
       - name: download
         run: |
-          curl -s -O https://raw.githubusercontent.com/piotrwestphal/secure/main/secure-connect-kingboo.zip
+          env
+          curl -s -O https://github.com/piotrwestphal/secure/blob/main/secure-connect-kingboo.zip
           ls -a
 
 #  build_webapp:
