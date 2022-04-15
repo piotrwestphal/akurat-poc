@@ -5,70 +5,78 @@ on:
       - main
 
 jobs:
-  build_webapp:
+  test_download:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: webapp/package-lock.json
-
-      - name: install dependencies
-        working-directory: ./webapp
+      - name: download
         run: |
-          npm ci
+          curl -s -O https://raw.githubusercontent.com/piotrwestphal/secure/main/secure-connect-kingboo.zip
+          ls -a
 
-      - name: build webapp
-        working-directory: ./webapp
-        run: |
-          npm run build
-
-  build_backend:
-    services:
-      cassandra:
-        image: cassandra:latest
-        ports:
-          - 9042:9042
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-          cache: gradle
-
-      - name: run unit tests
-        working-directory: ./backend
-        run: |
-          ./gradlew test
-
-      - name: build jar
-        working-directory: ./backend
-        run: |
-          ./gradlew :app:shadowJar
-
-      - name: run app
-        working-directory: ./backend
-        env:
-          KTOR_ENV: ci
-#          ASTRA_DB_CONTACT_POINT: cassandra
-        run: java -jar app/build/libs/*.jar &
-
-      - name: execute tests
-        working-directory: ./backend
-        run: ./gradlew :api-tests:integrationTest
-
-      - name: archive api tests results
-        if: failure()
-        uses: actions/upload-artifact@v3
-        with:
-          name: api-tests-results
-          path: backend/api-tests/build/reports/tests/integrationTest
+#  build_webapp:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - uses: actions/setup-node@v2
+#        with:
+#          node-version: '16'
+#          cache: 'npm'
+#          cache-dependency-path: webapp/package-lock.json
+#
+#      - name: install dependencies
+#        working-directory: ./webapp
+#        run: |
+#          npm ci
+#
+#      - name: build webapp
+#        working-directory: ./webapp
+#        run: |
+#          npm run build
+#
+#  build_backend:
+#    services:
+#      cassandra:
+#        image: cassandra:latest
+#        ports:
+#          - 9042:9042
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#          cache: gradle
+#
+#      - name: run unit tests
+#        working-directory: ./backend
+#        run: |
+#          ./gradlew test
+#
+#      - name: build jar
+#        working-directory: ./backend
+#        run: |
+#          ./gradlew :app:shadowJar
+#
+#      - name: run app
+#        working-directory: ./backend
+#        env:
+#          KTOR_ENV: ci
+#        run: java -jar app/build/libs/*.jar &
+#
+#      - name: execute tests
+#        working-directory: ./backend
+#        run: ./gradlew :api-tests:integrationTest
+#
+#      - name: archive api tests results
+#        if: failure()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: api-tests-results
+#          path: backend/api-tests/build/reports/tests/integrationTest
