@@ -11,8 +11,7 @@ jobs:
     steps:
       - name: download
         run: |
-          env
-          curl -s -O https://github.com/piotrwestphal/secure/blob/main/secure-connect-kingboo.zip
+          curl -s -O ${{ secrets.CASSANDRA_SECURE_BUNDLE_URL }}
           ls -a
 
 #  build_webapp:
