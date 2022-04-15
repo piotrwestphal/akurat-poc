@@ -1,0 +1,4 @@
+{
+  "error": "Bad Request",
+  "message": "Wrong request parameter 'id' format: [must match the expected pattern]"
+}

@@ -1,10 +1,12 @@
-val ktor_version: String by rootProject
-val kotlin_version: String by rootProject
 val logback_version: String by rootProject
+val konform_version: String by rootProject
+val kotlin_version: String by rootProject
+val ktor_version: String by rootProject
 
 plugins {
     application
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    kotlin("plugin.serialization") version "1.6.10"
 }
 
 application {
@@ -12,14 +14,17 @@ application {
 }
 
 dependencies {
-    implementation(project(":api"))
-    implementation(project(":core"))
     implementation(project(":domain"))
+    implementation(project(":plan"))
+    implementation(project(":profile"))
+    implementation("io.ktor:ktor-auth:$ktor_version")
     implementation("io.ktor:ktor-server-core:$ktor_version")
     implementation("io.ktor:ktor-server-netty:$ktor_version")
+    implementation("io.ktor:ktor-serialization:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("io.konform:konform:$konform_version")
 
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
-    testImplementation("io.ktor:ktor-serialization:$ktor_version")
 }
 
 tasks{
@@ -29,6 +34,3 @@ tasks{
         }
     }
 }
-
-// workaround for intellij issue
-tasks.register("prepareKotlinBuildScriptModel") {}

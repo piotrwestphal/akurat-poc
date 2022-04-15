@@ -15,3 +15,8 @@ services:
     image: ak-webapp
     ports:
       - 8080:80
+
+  cassandra:
+    image: cassandra:latest
+    ports:
+      - 9042:9042

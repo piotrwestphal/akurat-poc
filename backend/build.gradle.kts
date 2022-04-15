@@ -4,6 +4,7 @@ val logback_version: String by project
 val koin_version: String by project
 val assertj_version: String by project
 val mockk_version: String by project
+val klogging_version: String by project
 
 // TODO: https://github.com/mobiletoly/ktor-hexagonal-multimodule
 // TODO: https://github.com/mathias21/KtorEasy
@@ -34,6 +35,7 @@ subprojects {
     dependencies {
         implementation("io.insert-koin:koin-ktor:$koin_version")
         implementation ("io.insert-koin:koin-logger-slf4j:$koin_version")
+        implementation ("io.github.microutils:kotlin-logging-jvm:$klogging_version")
 
         testImplementation("io.insert-koin:koin-test:$koin_version")
         testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")

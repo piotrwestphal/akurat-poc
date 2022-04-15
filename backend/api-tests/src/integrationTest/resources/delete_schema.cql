@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS data.profiles;
+DROP KEYSPACE IF EXISTS data;

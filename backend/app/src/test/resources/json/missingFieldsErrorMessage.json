@@ -1,4 +1,0 @@
-{
-  "error": "Bad Request",
-  "message": "Fields [name, role] are required for type with serial name 'com.akurat.profile.CreateProfileRequest', but they were missing"
-}

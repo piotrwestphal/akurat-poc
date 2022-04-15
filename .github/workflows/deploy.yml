@@ -5,53 +5,12 @@ on:
       - main
 
 jobs:
-#  publish_backend:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v1
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v1
-#
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v1
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
-#      - name: Build backend and push
-#        uses: docker/build-push-action@v2
-#        with:
-#          context: ./backend
-#          push: true
-#          tags: piotrwest/ak-backend:latest
-#
-#  publish_webapp:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Set up QEMU
-#        uses: docker/setup-qemu-action@v1
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v1
-#
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v1
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
-#      - name: Build webapp and push
-#        uses: docker/build-push-action@v2
-#        with:
-#          context: ./webapp
-#          push: true
-#          tags: piotrwest/ak-webapp:latest
-
   deploy:
-#    needs: [publish_backend, publish_webapp]
     runs-on: ubuntu-latest
+
+    env:
+      CONNECT_BUNDLE_FILE_NAME: secure-connect.zip
+
     steps:
       - uses: actions/checkout@v2
 
@@ -59,12 +18,30 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.WESTUS00_KEY }}
 
-      - name: Deploy app to westus00
+      - name: download cassandra secure bundle
         run: |
-          ssh -T -o StrictHostKeyChecking=no -l ${{ secrets.WESTUS00_USER }} ${{ secrets.WESTUS00_ADDRESS }} << EOF
+          curl -s ${{ secrets.CASSANDRA_SECURE_BUNDLE_URL }} > ${{ env.CONNECT_BUNDLE_FILE_NAME }}
+
+      - name: copy cassandra secure bundle to westus00
+        run: |
+          scp -o StrictHostKeyChecking=no ${{ env.CONNECT_BUNDLE_FILE_NAME }} ${{ secrets.WESTUS00_USER }}@${{ secrets.WESTUS00_ADDRESS }}:
+
+      - name: deploy app to westus00
+        env:
+          ASTRA_DB_USERNAME: ${{ secrets.ASTRA_DB_USERNAME }}
+          ASTRA_DB_PASSWORD: ${{ secrets.ASTRA_DB_PASSWORD }}
+          ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH: backend/cassandra/${{env.CONNECT_BUNDLE_FILE_NAME}}
+        run: |
+          ssh -T -o StrictHostKeyChecking=no -l ${{ secrets.WESTUS00_USER }} ${{ secrets.WESTUS00_ADDRESS }} << EOF       
             cd ~/app
             git fetch
             git reset --hard origin/main
-            docker-compose up --build --force-recreate -d
+          
+            echo "ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH=$ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH" >> .env.prod
+            echo "ASTRA_DB_USERNAME=$ASTRA_DB_USERNAME" >> .env.prod
+            echo "ASTRA_DB_PASSWORD=$ASTRA_DB_PASSWORD" >> .env.prod
+          
+            mv ~/$CONNECT_BUNDLE_FILE_NAME ~/app/backend/cassandra
+            docker-compose up --build --force-recreate -d --env-file .env.prod
             docker image prune -f
           EOF
