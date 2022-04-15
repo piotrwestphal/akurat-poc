@@ -28,6 +28,7 @@ internal class ProfilesTests : TestServer() {
                 contentType(ContentType.Application.Json)
                 body = CreateProfileRequest("West", Role.MODEL)
             }
+            println("REQUEST RESPONSE: ${response.receive<String>()}")
             assertThat(response.status).isEqualTo(HttpStatusCode.Created)
             val profileResponse = response.receive<ProfileResponse>()
             assertThat(response.headers["Location"]).contains("/api/v1/profiles/${profileResponse.id}")
@@ -49,6 +50,7 @@ internal class ProfilesTests : TestServer() {
         runBlocking {
             val (id) = createProfile("West", Role.MODEL)
             val deleteResponse: HttpResponse = httpClient().delete("$BASE_PROFILES_PATH/$id")
+            println("REQUEST RESPONSE: ${deleteResponse.receive<String>()}")
             assertThat(deleteResponse.status).isEqualTo(HttpStatusCode.OK)
 
             val getResponse: HttpResponse = httpClient().get("$BASE_PROFILES_PATH/$id")
@@ -60,6 +62,8 @@ internal class ProfilesTests : TestServer() {
         runBlocking {
             val (id, name, role, createdAt, updatedAt) = createProfile("West", Role.MODEL)
             val response: HttpResponse = httpClient().get("$BASE_PROFILES_PATH/$id")
+            println("REQUEST RESPONSE: ${response.receive<String>()}")
+
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
 
             SoftAssertions().apply {
@@ -82,6 +86,7 @@ internal class ProfilesTests : TestServer() {
             val profile5 = createProfile("Daniel Lobotom", Role.MODEL)
 
             val response: HttpResponse = httpClient().get(BASE_PROFILES_PATH)
+            println("REQUEST RESPONSE: ${response.receive<String>()}")
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             val profilesResponse = response.receive<List<ProfileResponse>>()
             assertThat(profilesResponse.map { it.id }).containsExactlyInAnyOrder(
@@ -102,6 +107,7 @@ internal class ProfilesTests : TestServer() {
                 body = UpdateProfileRequest("Morgan Freeman", Role.MODEL)
             }
 
+            println("REQUEST RESPONSE: ${response.receive<String>()}")
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             SoftAssertions().apply {
                 val (id, name, role, createdAt, updatedAt) = response.receive<ProfileResponse>()
