@@ -18,15 +18,15 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.WESTUS00_KEY }}
 
-      - name: Download cassandra secure bundle
+      - name: download cassandra secure bundle
         run: |
           curl -s ${{ secrets.CASSANDRA_SECURE_BUNDLE_URL }} > ${{ env.CONNECT_BUNDLE_FILE_NAME }}
 
-      - name: Copy cassandra secure bundle to westus00
+      - name: copy cassandra secure bundle to westus00
         run: |
           scp ${{ env.CONNECT_BUNDLE_FILE_NAME }} ${{ secrets.WESTUS00_USER }}@${{ secrets.WESTUS00_ADDRESS }}:
 
-      - name: Deploy app to westus00
+      - name: deploy app to westus00
         env:
           ASTRA_DB_USERNAME: ${{ secrets.ASTRA_DB_USERNAME }}
           ASTRA_DB_PASSWORD: ${{ secrets.ASTRA_DB_PASSWORD }}

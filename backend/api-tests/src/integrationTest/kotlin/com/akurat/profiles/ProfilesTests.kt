@@ -28,8 +28,11 @@ internal class ProfilesTests : TestServer() {
                 contentType(ContentType.Application.Json)
                 body = CreateProfileRequest("West", Role.MODEL)
             }
-
             assertThat(response.status).isEqualTo(HttpStatusCode.Created)
+            val profileResponse = response.receive<ProfileResponse>()
+            assertThat(response.headers["Location"]).contains("/api/v1/profiles/${profileResponse.id}")
+
+            // TODO: add GET call and then check response
             SoftAssertions().apply {
                 val (id, name, role, createdAt, updatedAt) = response.receive<ProfileResponse>()
                 assertThat(id).isNotNull
@@ -94,7 +97,7 @@ internal class ProfilesTests : TestServer() {
     fun `should update`(): Unit =
         runBlocking {
             val createdProfile = createProfile("Morgan Woodpecker", Role.PHOTOGRAPHER)
-            val response: HttpResponse = httpClient().patch("$$BASE_PROFILES_PATH/${createdProfile.id}") {
+            val response: HttpResponse = httpClient().patch("$BASE_PROFILES_PATH/${createdProfile.id}") {
                 contentType(ContentType.Application.Json)
                 body = UpdateProfileRequest("Morgan Freeman", Role.MODEL)
             }

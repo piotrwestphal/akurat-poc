@@ -62,7 +62,7 @@ jobs:
           KTOR_ENV: ci
         run: java -jar app/build/libs/*.jar &
 
-      - name: execute tests
+      - name: execute api tests
         run: ./gradlew :api-tests:integrationTest
 
       - name: archive api tests results
