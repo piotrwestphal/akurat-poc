@@ -2,7 +2,8 @@ name: Deploy to westus00
 on:
   push:
     branches:
-      - main
+#      - main
+      - cassandra-integration
 
 jobs:
   deploy:
