@@ -1,2 +1,2 @@
-DROP TABLE IF EXISTS kingboo.profiles;
-DROP KEYSPACE IF EXISTS kingboo;
+DROP TABLE IF EXISTS data.profiles;
+DROP KEYSPACE IF EXISTS data;

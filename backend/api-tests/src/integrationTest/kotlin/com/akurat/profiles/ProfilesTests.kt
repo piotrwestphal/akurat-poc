@@ -16,11 +16,15 @@ import kotlin.test.Test
 
 internal class ProfilesTests : TestServer() {
 
+    companion object {
+        private val BASE_PROFILES_PATH = "http://localhost:8080/api/v1/profiles"
+    }
+
     @Test
     fun `should create`(): Unit =
         runBlocking {
             val now = Instant.now().toEpochMilli()
-            val response: HttpResponse = httpClient().post("http://localhost:8080/api/v1/profiles") {
+            val response: HttpResponse = httpClient().post(BASE_PROFILES_PATH) {
                 contentType(ContentType.Application.Json)
                 body = CreateProfileRequest("West", Role.MODEL)
             }
@@ -41,10 +45,10 @@ internal class ProfilesTests : TestServer() {
     fun `should delete`(): Unit =
         runBlocking {
             val (id) = createProfile("West", Role.MODEL)
-            val deleteResponse: HttpResponse = httpClient().delete("http://localhost:8080/api/v1/profiles/$id")
+            val deleteResponse: HttpResponse = httpClient().delete("$BASE_PROFILES_PATH/$id")
             assertThat(deleteResponse.status).isEqualTo(HttpStatusCode.OK)
 
-            val getResponse: HttpResponse = httpClient().get("http://localhost:8080/api/v1/profiles/$id")
+            val getResponse: HttpResponse = httpClient().get("$BASE_PROFILES_PATH/$id")
             assertThat(getResponse.status).isEqualTo(HttpStatusCode.NotFound)
         }
 
@@ -52,7 +56,7 @@ internal class ProfilesTests : TestServer() {
     fun `should retrieve single`(): Unit =
         runBlocking {
             val (id, name, role, createdAt, updatedAt) = createProfile("West", Role.MODEL)
-            val response: HttpResponse = httpClient().get("http://localhost:8080/api/v1/profiles/$id")
+            val response: HttpResponse = httpClient().get("$BASE_PROFILES_PATH/$id")
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
 
             SoftAssertions().apply {
@@ -74,7 +78,7 @@ internal class ProfilesTests : TestServer() {
             val profile4 = createProfile("Linda McCartney", Role.DESIGNER)
             val profile5 = createProfile("Daniel Lobotom", Role.MODEL)
 
-            val response: HttpResponse = httpClient().get("http://localhost:8080/api/v1/profiles")
+            val response: HttpResponse = httpClient().get(BASE_PROFILES_PATH)
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             val profilesResponse = response.receive<List<ProfileResponse>>()
             assertThat(profilesResponse.map { it.id }).containsExactlyInAnyOrder(
@@ -90,7 +94,7 @@ internal class ProfilesTests : TestServer() {
     fun `should update`(): Unit =
         runBlocking {
             val createdProfile = createProfile("Morgan Woodpecker", Role.PHOTOGRAPHER)
-            val response: HttpResponse = httpClient().patch("http://localhost:8080/api/v1/profiles/${createdProfile.id}") {
+            val response: HttpResponse = httpClient().patch("$$BASE_PROFILES_PATH/${createdProfile.id}") {
                 contentType(ContentType.Application.Json)
                 body = UpdateProfileRequest("Morgan Freeman", Role.MODEL)
             }

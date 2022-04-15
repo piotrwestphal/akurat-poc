@@ -1,7 +1,6 @@
 package com.akurat
 
 import com.datastax.oss.driver.api.core.CqlSession
-import java.net.InetSocketAddress
 
 class CassandraTestHelper {
     fun executeScriptsFromFile(fileName: String) {
@@ -22,6 +21,5 @@ class CassandraTestHelper {
 
     private fun getSession(keyspace: String? = null) = CqlSession.builder()
         .withKeyspace(keyspace)
-//        .addContactPoint(InetSocketAddress.createUnresolved("cassandra", 9042))
         .build()
 }

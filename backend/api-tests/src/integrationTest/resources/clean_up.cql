@@ -1,1 +1,1 @@
-TRUNCATE kingboo.profiles;
+TRUNCATE data.profiles;

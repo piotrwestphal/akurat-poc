@@ -39,6 +39,6 @@ fun TestServer.Companion.createProfile(profileName: String, profileRole: Role): 
         .value("created_at", literal(createdAt))
         .value("updated_at", literal(updatedAt))
         .asCql()
-    dbHelper.executeScript(cqlQuery, "kingboo")
+    dbHelper.executeScript(cqlQuery, "data")
     return profile
 }

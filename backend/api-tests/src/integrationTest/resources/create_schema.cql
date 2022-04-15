@@ -1,5 +1,5 @@
-CREATE KEYSPACE IF NOT EXISTS kingboo WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};
-CREATE TABLE IF NOT EXISTS kingboo.profiles (
+CREATE KEYSPACE IF NOT EXISTS data WITH REPLICATION = {'class': 'SimpleStrategy', 'replication_factor': 1};
+CREATE TABLE IF NOT EXISTS data.profiles (
     profile_id uuid,
     name text,
     role text,
