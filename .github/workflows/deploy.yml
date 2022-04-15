@@ -25,7 +25,7 @@ jobs:
 
       - name: copy cassandra secure bundle to westus00
         run: |
-          scp ${{ env.CONNECT_BUNDLE_FILE_NAME }} ${{ secrets.WESTUS00_USER }}@${{ secrets.WESTUS00_ADDRESS }}:
+          scp -o StrictHostKeyChecking=no ${{ env.CONNECT_BUNDLE_FILE_NAME }} ${{ secrets.WESTUS00_USER }}@${{ secrets.WESTUS00_ADDRESS }}:
 
       - name: deploy app to westus00
         env:
