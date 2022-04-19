@@ -30,7 +30,7 @@ jobs:
         env:
           ASTRA_DB_USERNAME: ${{ secrets.ASTRA_DB_USERNAME }}
           ASTRA_DB_PASSWORD: ${{ secrets.ASTRA_DB_PASSWORD }}
-          ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH: backend/cassandra/${{env.CONNECT_BUNDLE_FILE_NAME}}
+          ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH: ${{env.CONNECT_BUNDLE_FILE_NAME}}
         run: |
           ssh -T -o StrictHostKeyChecking=no -l ${{ secrets.WESTUS00_USER }} ${{ secrets.WESTUS00_ADDRESS }} << EOF       
             cd ~/app
@@ -41,7 +41,7 @@ jobs:
             echo "ASTRA_DB_USERNAME=$ASTRA_DB_USERNAME" >> .env.prod
             echo "ASTRA_DB_PASSWORD=$ASTRA_DB_PASSWORD" >> .env.prod
           
-            mv ~/$CONNECT_BUNDLE_FILE_NAME ~/app/backend/cassandra
-            docker-compose up --build --force-recreate -d --env-file .env.prod
+            mv ~/$CONNECT_BUNDLE_FILE_NAME ~/app
+            docker-compose -f docker-compose.yml -f prod.yml up --build --force-recreate -d
             docker image prune -f
           EOF
