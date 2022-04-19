@@ -34,11 +34,10 @@ fun Application.configureErrorHandler() {
             log.error(cause)
             call.respond(statusCode, ErrorMessage(statusCode.description, cause.message))
         }
-        // TODO: remove
         exception<Exception> { cause ->
             val statusCode = HttpStatusCode.InternalServerError
             log.error(cause)
-            call.respond(statusCode, ErrorMessage(statusCode.description, "MESSAGE: ${cause.message} STACK TRACE: ${cause.stackTraceToString()}"))
+            call.respond(statusCode, ErrorMessage(statusCode.description, cause.message))
         }
     }
 }
