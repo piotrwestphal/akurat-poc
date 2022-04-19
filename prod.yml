@@ -4,4 +4,4 @@ services:
     env_file:
       - .env.prod
     volumes:
-      - ./${ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH}:/app/${ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH}:ro
+      - ./${CONNECT_BUNDLE_FILE_NAME}:/app/${CONNECT_BUNDLE_FILE_NAME}:ro

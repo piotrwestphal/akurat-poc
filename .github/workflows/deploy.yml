@@ -30,21 +30,18 @@ jobs:
         env:
           ASTRA_DB_USERNAME: ${{ secrets.ASTRA_DB_USERNAME }}
           ASTRA_DB_PASSWORD: ${{ secrets.ASTRA_DB_PASSWORD }}
-          ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH: ${{env.CONNECT_BUNDLE_FILE_NAME}}
         run: |
           ssh -T -o StrictHostKeyChecking=no -l ${{ secrets.WESTUS00_USER }} ${{ secrets.WESTUS00_ADDRESS }} << EOF       
             cd ~/app
             git fetch
             git reset --hard origin/main
           
-            echo "ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH=$ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH" >> .env.prod
+            echo "ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH=$CONNECT_BUNDLE_FILE_NAME" >> .env.prod
             echo "ASTRA_DB_USERNAME=$ASTRA_DB_USERNAME" >> .env.prod
             echo "ASTRA_DB_PASSWORD=$ASTRA_DB_PASSWORD" >> .env.prod
           
             mv ~/$CONNECT_BUNDLE_FILE_NAME ~/app
-            env
-            export ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH=$ASTRA_DB_SECURE_CONNECT_BUNDLE_PATH
-            env
+            export CONNECT_BUNDLE_FILE_NAME=$CONNECT_BUNDLE_FILE_NAME
             docker-compose -f docker-compose.yml -f prod.yml up --build --remove-orphans --force-recreate -d
             docker image prune -f
           EOF
