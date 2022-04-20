@@ -15,6 +15,7 @@ application {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":pdf"))
     implementation(project(":plan"))
     implementation(project(":profile"))
     implementation("io.ktor:ktor-auth:$ktor_version")
