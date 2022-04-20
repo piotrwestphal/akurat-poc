@@ -2,7 +2,7 @@ val ktor_version: String by rootProject
 val logback_version: String by rootProject
 
 plugins {
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.20"
 }
 
 dependencies {

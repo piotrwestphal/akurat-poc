@@ -1,18 +1,20 @@
 package com.akurat
 
+import mu.KotlinLogging.logger
 import org.koin.dsl.module
 
-fun profileModule(env: String? = null) =
-    when (env) {
+fun profileModule(env: String? = null): List<org.koin.core.module.Module> {
+    logger {}.info { "Loading profile module based on env value: [$env]" }
+    return when (env) {
         "ci", "prod" -> {
-            println("NOT MOCKED SERVICES $env")
             profilesCassandraModule
         }
         else -> {
-            println("MOCKED SERVICES $env")
             profilesInMemoryModule
         }
     }
+}
+
 
 val profilesInMemoryModule = listOf(
     module {
